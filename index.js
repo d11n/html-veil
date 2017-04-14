@@ -5,7 +5,7 @@
     var veils_meta = {};
 
     function Veil(params) {
-        construct_veil.call(this, params);
+        construct_veil.call(this, params || {});
     }
     Veil.get = get_veil;
     Veil.destroy = destroy_veil;
