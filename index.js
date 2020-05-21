@@ -240,7 +240,7 @@
         var html_classes = veil.element.className
         return -1 === html_classes.indexOf(meta.activated_class)
     }
-    function activate_veil () {
+    function activate_veil (params) {
         var veil = this
         var meta = veils_meta[veil.html_id]
         !meta && throw_injection_error()
@@ -249,8 +249,22 @@
                 = CONFIG.package_name
                 + ' ' + meta.changing_state_class
                 + ' ' + meta.activated_class
+            if (params.deactivator) {
+                veil.element.addEventListener('click', handle_veil_click)
+            }
         }
         return true
+
+        ///////////
+
+        function handle_veil_click (click_event) {
+            if (veil.is_activated()) {
+                veil.deactivate()
+                params.deactivator()
+                veil.element.removeEventListener('click', handle_veil_click)
+            }
+            return true
+        }
     }
     function deactivate_veil () {
         var veil = this
@@ -263,11 +277,11 @@
         }
         return true
     }
-    function toggle_veil () {
+    function toggle_veil (params) {
         var veil = this
         return veil.is_activated()
-            ? veil.deactivate()
-            : veil.activate()
+            ? veil.deactivate(params)
+            : veil.activate(params)
     }
     function end_veil_state_change () {
         var veil = this
