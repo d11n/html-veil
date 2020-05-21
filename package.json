@@ -1,12 +1,15 @@
 {
     "name": "html-veil",
-    "version": "0.1.2",
+    "version": "1.0.0",
     "description": "Drop a veil (or more than one) into HTML that obscures and prevents user interactions with content that is behind the veil (e.g. lightboxes and modals)",
-    "author": "Derek Dunagan",
+    "author": "Derek Dunagan (https://github.com/d11n)",
     "license": "MIT",
     "homepage": "https://github.com/d11n/html-veil#readme",
     "repository": {
         "type": "git",
-        "url": "git@github.com:d11n/html-veil.git"
+        "url": "git+https://github.com/d11n/html-veil.git"
+    },
+    "bugs": {
+        "url": "https://github.com/d11n/html-veil/issues"
     }
 }
