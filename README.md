@@ -7,11 +7,7 @@ Drop a veil (or more than one) into HTML that obscures and prevents user interac
 ## Installation
 
 ```shell
-$ yarn add html-veil
-```
-
-```shell
-$ npm install html-veil --save
+$ npm add html-veil
 ```
 
 <br/>
@@ -19,11 +15,13 @@ $ npm install html-veil --save
 ## Basic Usage
 
 ```javascript
-var Veil = require('html-veil');
+var Veil = require('html-veil')
+// or
+var Veil = window.Veil
 
-var veil = new Veil;
-veil.inject(); // Drop the veil into the DOM.
-veil.toggle(); // Turn it on and off.
+var veil = new Veil
+veil.inject() // Drop the veil into the DOM.
+veil.toggle() // Turn it on and off.
 ```
 
 The default `z-index` is `1000`. So position HTML elements accordingly. And note that elements behind the veil are obscured and do not respond to user interactions. If desired, the `z-index` can be overridden by passing in an option when constructing a veil.
@@ -37,46 +35,46 @@ var lightbox_veil = new Veil({
     html_id: 'lightbox-veil',
     color: 'rgba(255, 255, 255, 0.85)',
     z_index: 100,
-    });
+})
 ```
 
-`var veil = new Veil;` (with no options) is the equivalent of:
+`var veil = new Veil` (with no options) is the equivalent of:
 
 ```javascript
 var veil = new Veil({
     html_id: 'veil',
     color: 'rgba(0, 0, 0, 0.7)',
     z_index: 1000,
-    });
+})
 ```
 
 Even though color can easily be set via CSS, it is simpler to set color in JavaScript when no extra CSS styling is needed.
 
 <br/>
 
-## Full JavaScript Interface
+## Full Interface
 
 ```javascript
-var Veil = require('html-veil');
+var Veil = require('html-veil')
 
 // Get the default veil (see "Manipulating an Existing Veil")
-Veil.get();
+Veil.get()
 
 // Destroy the default veil (see "Removing All Traces of a Veil")
-Veil.destroy();
+Veil.destroy()
 
 // For a veil constructed with { html_id: 'lightbox-veil' }
-Veil.get('lightbox-veil');
-Veil.destroy('lightbox-veil');
+Veil.get('lightbox-veil')
+Veil.destroy('lightbox-veil')
 
-var veil = new Veil;
-veil.inject(); // Drop the veil into the DOM
-veil.is_activated();
-veil.is_deactivated();
-veil.activate();
-veil.deactivate();
-veil.toggle(); // Alternates between veil.activate() and veil.deactivate()
-veil.remove(); // Only removes the HTML element from the DOM (i.e. veil.inject() would put it back)
+var veil = new Veil
+veil.inject() // Drop the veil into the DOM
+veil.is_activated()
+veil.is_deactivated()
+veil.activate()
+veil.deactivate()
+veil.toggle() // Alternates between veil.activate() and veil.deactivate()
+veil.remove() // Only removes the HTML element from the DOM (i.e. veil.inject() would put it back)
 ```
 
 <br/>
@@ -89,14 +87,14 @@ veil.remove(); // Only removes the HTML element from the DOM (i.e. veil.inject()
 var modal_veil = new Veil({
     html_id: 'modal-veil',
     z_index: 999,
-    });
-modal_veil.inject();
+})
+modal_veil.inject()
 
 var mobile_nav_veil = new Veil({
     html_id: 'mobile-nav-veil',
     z_index: 998,
-    });
-mobile_nav_veil.inject();
+})
+mobile_nav_veil.inject()
 ```
 
 ##### In CSS:
@@ -123,7 +121,6 @@ mobile_nav_veil.inject();
 #modal-veil {
     background-image: url('/images/bg-blur-texture.png');
     transform: scale(0.95); /* slight zoom-in effect */
-
 }
 .modal-veil-activated {
     opacity: 0.9 !important;
@@ -177,49 +174,69 @@ Setting no style rules is the equivalent of:
 ##### In `index.js`
 
 ```javascript
-var Veil = require('html-veil');
+var Veil = require('html-veil')
 
 // Default veil
-var veil = new Veil;
-veil.inject();
+var veil = new Veil
+veil.inject()
 
 var lightbox_veil = new Veil({
     html_id: 'lightbox-veil'
     color: 'rgba(51, 51, 51, 0.8)',
-    });
-lightbox_veil.inject();
+})
+lightbox_veil.inject()
 ```
 
 ##### In `nav.js`
 
 ```javascript
-var Veil = require('html-veil');
+var Veil = require('html-veil')
 
 // Default veil
-var veil = Veil.get();
-var nav_icon = document.getElementById('nav-super-menu-icon');
-nav_icon && nav_icon.addEventListener('click', handle_nav_icon_click);
+var veil = Veil.get()
+var nav_icon = document.getElementById('nav-super-menu-icon')
+nav_icon && nav_icon.addEventListener('click', handle_nav_icon_click)
 
-var lightbox_veil = Veil.get('lightbox-veil');
-var lightbox_images = document.getElementsByClassName('lightbox');
+var lightbox_veil = Veil.get('lightbox-veil')
+var lightbox_images = document.getElementsByClassName('lightbox')
 for (var i = 0, n = lightbox_images.length - 1; i <= n; i++) {
-    var image = lightbox_images[i];
+    var image = lightbox_images[i]
     if ('img' === image.tagName.toLowerCase() && image.src) {
-        image.addEventListener('click', handle_lightbox_image_click);
+        image.addEventListener('click', handle_lightbox_image_click)
     }
 }
 
-function handle_nav_icon_click() {
-    veil.toggle();
-    // toggle_nav_menu();
+function handle_nav_icon_click () {
+    open_nav_menu()
+    veil.toggle({
+        deactivator: close_nav_menu,
+        // ^ Optionally respond to when the user clicks on the veil itself
+    })
 }
-function handle_lightbox_image_click(event_) {
-    lightbox_veil.toggle();
-    if (lightbox_veil.is_activated()) {
-        // show_lightbox(event_.target);
+function handle_lightbox_image_click (click_event) {
+    if (lightbox_veil.is_deactivated()) {
+        show_lightbox(click_event.target)
+        veil.activate({
+            deactivator: hide_lightbox,
+        })
     } else {
-        // hide_lightbox();
+        // Shouldn't happen, but just to be safe:
+        hide_lightbox()
+        veil.deactivate()
     }
+}
+
+function open_nav_menu () {
+    // ...
+}
+function close_nav_menu () {
+    // ...
+}
+function show_lightbox (image_element) {
+    // ...
+}
+function hide_lightbox () {
+    // ...
 }
 ```
 
@@ -230,22 +247,22 @@ With modular JavaScript, it is not always obvious whether an expected veil has b
 ## Removing All Traces of a Veil
 
 ```javascript
-var Veil = require('html-veil');
+var Veil = require('html-veil')
 
 // Default veil
-var veil = new Veil;
-veil.inject();
+var veil = new Veil
+veil.inject()
 
-var lightbox_veil = new Veil({ html_id: 'lightbox-veil' });
-lightbox_veil.inject();
+var lightbox_veil = new Veil({ html_id: 'lightbox-veil' })
+lightbox_veil.inject()
 
 // Remove the HTML elements and all knowledge of the Veil objects
-Veil.destroy(); // equivalent to Veil.destroy('veil')
-Veil.destroy('lightbox-veil');
+Veil.destroy() // equivalent to Veil.destroy('veil')
+Veil.destroy('lightbox-veil')
 
 // Remove the only remaining references
-veil = null;
-lightbox_veil = null;
+veil = null
+lightbox_veil = null
 
 // Let garbage collection take care of the rest
 ```
